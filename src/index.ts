@@ -1,4 +1,5 @@
 import express from 'express'
+import axios from 'axios'
 // import bodyParser from 'body-parser'
 
 const main = () => {
@@ -7,8 +8,28 @@ const main = () => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }));
 
-  app.post("/", (req, res) => {
-    console.log(req.body)
+  app.post("/", async (req, res) => {
+    const sr = JSON.parse(req.body.payload)
+    const url = sr.response_url;
+    console.log(sr.actions[0])
+
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+
+    // ボタンをメッセージに更新する
+    const data = {
+      "replace_original": "true",
+      "text": "ok, finish this intraction."
+    }
+
+    const { status } = await axios({
+      method: 'post',
+      url,
+      headers,
+      data
+    })
+    console.log("status", status)
   })
 
   app.get("/", (_, res) => {
